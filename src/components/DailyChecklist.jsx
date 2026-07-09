@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, Circle, Check } from 'lucide-react';
+import { CheckCircle2, Circle } from 'lucide-react';
 import { CHECKLIST_INICIO, CHECKLIST_CIERRE } from '../data/alba-constants';
 
 export default function DailyChecklist() {

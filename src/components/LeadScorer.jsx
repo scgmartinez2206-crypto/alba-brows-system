@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Fire, Zap, Snowflake, Flame } from 'lucide-react';
+import { } from 'lucide-react';
 import { LEAD_SCORER } from '../data/alba-constants';
 
 export default function LeadScorer() {

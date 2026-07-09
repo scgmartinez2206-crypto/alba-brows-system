@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, CheckCircle, Users, TrendingUp, AlertCircle } from 'lucide-react';
+import { Calendar, CheckCircle, AlertCircle } from 'lucide-react';
 import { CRONOGRAMA } from '../data/alba-constants';
 
 export default function Dashboard() {
-  const [hoy, setHoy] = useState(new Date());
+  const [hoy] = useState(new Date());
   const [diasFaltantes, setDiasFaltantes] = useState(0);
   const [kpisDia, setKpisDia] = useState({
     contactados: 0,
