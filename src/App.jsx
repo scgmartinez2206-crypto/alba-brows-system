@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Home, CheckSquare, Calendar, Target, BookMarked, Package, LogOut, Loader } from 'lucide-react';
+import { Menu, X, Home, CheckSquare, Calendar, Target, BookMarked, Package, LogOut, Loader, ListTodo, User, Settings } from 'lucide-react';
 import authService from './services/authService';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
@@ -8,6 +8,9 @@ import Cronograma from './components/Cronograma';
 import LeadScorer from './components/LeadScorer';
 import GuionesObjeciones from './components/GuionesObjeciones';
 import Productos from './components/Productos';
+import TaskManager from './components/TaskManager';
+import ProfileSettings from './components/ProfileSettings';
+import AccountSettings from './components/AccountSettings';
 import './App.css';
 
 function App() {
@@ -15,9 +18,13 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showAvatarDropdown, setShowAvatarDropdown] = useState(false);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
+    { id: 'tasks', label: 'Tareas', icon: ListTodo },
     { id: 'checklist', label: 'Checklist', icon: CheckSquare },
     { id: 'cronograma', label: 'Cronograma', icon: Calendar },
     { id: 'leadscorer', label: 'Lead Scorer', icon: Target },
@@ -48,6 +55,8 @@ function App() {
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard user={user} onNavigate={setCurrentPage} />;
+      case 'tasks':
+        return <TaskManager user={user} />;
       case 'checklist':
         return <DailyChecklist />;
       case 'cronograma':
@@ -138,36 +147,84 @@ function App() {
           className="absolute bottom-0 left-0 right-0 p-6 border-t space-y-4"
           style={{ borderColor: 'rgba(236, 72, 153, 0.1)', backgroundColor: 'var(--primary-darker)' }}
         >
-          <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: 'var(--accent-pink)' }}
+          <div className="relative">
+            <button
+              onClick={() => setShowAvatarDropdown(!showAvatarDropdown)}
+              className="w-full flex items-center gap-3 p-2 rounded-lg transition-all"
+              style={{
+                backgroundColor: showAvatarDropdown ? 'rgba(236, 72, 153, 0.2)' : 'transparent'
+              }}
             >
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>
-                {user?.displayName?.charAt(0).toUpperCase() || 'U'}
-              </span>
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-medium truncate" style={{ color: 'white' }}>
-                {user?.displayName || 'Usuario'}
-              </p>
-              <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                Setter
-              </p>
-            </div>
-          </div>
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: 'var(--accent-pink)' }}
+              >
+                <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>
+                  {user?.displayName?.charAt(0).toUpperCase() || 'U'}
+                </span>
+              </div>
+              <div className="min-w-0 text-left">
+                <p className="text-sm font-medium truncate" style={{ color: 'white' }}>
+                  {user?.displayName || 'Usuario'}
+                </p>
+                <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  Setter
+                </p>
+              </div>
+            </button>
 
-          <button
-            onClick={handleLogout}
-            className="w-full py-2 px-4 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all"
-            style={{
-              backgroundColor: 'rgba(236, 72, 153, 0.2)',
-              color: 'var(--accent-pink)'
-            }}
-          >
-            <LogOut size={16} />
-            Salir
-          </button>
+            {/* DROPDOWN */}
+            {showAvatarDropdown && (
+              <div
+                className="absolute bottom-full left-0 right-0 mb-2 rounded-lg border space-y-1 p-2"
+                style={{
+                  backgroundColor: 'var(--primary-dark)',
+                  borderColor: 'rgba(236, 72, 153, 0.2)'
+                }}
+              >
+                <button
+                  onClick={() => {
+                    setShowProfileModal(true);
+                    setShowAvatarDropdown(false);
+                  }}
+                  className="w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 transition-colors"
+                  style={{
+                    color: 'rgba(255,255,255,0.8)',
+                    backgroundColor: 'rgba(236, 72, 153, 0.1)'
+                  }}
+                >
+                  <User size={14} />
+                  Mi Perfil
+                </button>
+                <button
+                  onClick={() => {
+                    setShowSettingsModal(true);
+                    setShowAvatarDropdown(false);
+                  }}
+                  className="w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 transition-colors"
+                  style={{
+                    color: 'rgba(255,255,255,0.8)',
+                    backgroundColor: 'rgba(236, 72, 153, 0.1)'
+                  }}
+                >
+                  <Settings size={14} />
+                  Configuración
+                </button>
+                <div style={{ borderTop: '1px solid rgba(236, 72, 153, 0.2)' }} className="my-1" />
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-3 py-2 rounded text-sm flex items-center gap-2 transition-colors"
+                  style={{
+                    color: 'var(--accent-pink)',
+                    backgroundColor: 'rgba(236, 72, 153, 0.1)'
+                  }}
+                >
+                  <LogOut size={14} />
+                  Salir
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </aside>
 
@@ -215,6 +272,22 @@ function App() {
           {renderPage()}
         </main>
       </div>
+
+      {/* PROFILE MODAL */}
+      {showProfileModal && (
+        <ProfileSettings
+          user={user}
+          onClose={() => setShowProfileModal(false)}
+        />
+      )}
+
+      {/* SETTINGS MODAL */}
+      {showSettingsModal && (
+        <AccountSettings
+          user={user}
+          onClose={() => setShowSettingsModal(false)}
+        />
+      )}
     </div>
   );
 }
