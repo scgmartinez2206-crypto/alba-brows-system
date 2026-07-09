@@ -47,7 +47,7 @@ function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard user={user} />;
+        return <Dashboard user={user} onNavigate={setCurrentPage} />;
       case 'checklist':
         return <DailyChecklist />;
       case 'cronograma':
@@ -59,7 +59,7 @@ function App() {
       case 'productos':
         return <Productos />;
       default:
-        return <Dashboard user={user} />;
+        return <Dashboard user={user} onNavigate={setCurrentPage} />;
     }
   };
 

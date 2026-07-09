@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, MessageCircle, CheckCircle2, DollarSign, ChevronRight } from 'lucide-react';
 import { CRONOGRAMA, KPIS_META } from '../data/alba-constants';
 
-export default function Dashboard() {
+export default function Dashboard({ user, onNavigate }) {
   const [hoy] = useState(new Date());
   const [diasFaltantes, setDiasFaltantes] = useState(0);
   const [kpis, setKpis] = useState({
@@ -177,7 +177,8 @@ export default function Dashboard() {
                   Pendiente desde hace 5 horas
                 </p>
                 <button
-                  className="mt-3 text-xs font-semibold px-3 py-1.5 rounded transition-colors"
+                  onClick={() => onNavigate && onNavigate('checklist')}
+                  className="mt-3 text-xs font-semibold px-3 py-1.5 rounded transition-colors hover:opacity-90 cursor-pointer"
                   style={{
                     backgroundColor: 'var(--accent-pink)',
                     color: 'white'
@@ -201,10 +202,12 @@ export default function Dashboard() {
                   Interesada en programa
                 </p>
                 <button
-                  className="mt-3 text-xs font-semibold px-3 py-1.5 rounded transition-colors"
+                  onClick={() => onNavigate && onNavigate('guiones')}
+                  className="mt-3 text-xs font-semibold px-3 py-1.5 rounded transition-colors hover:opacity-90"
                   style={{
                     backgroundColor: 'var(--accent-gold)',
-                    color: 'var(--primary-dark)'
+                    color: 'var(--primary-dark)',
+                    cursor: 'pointer'
                   }}
                 >
                   Enviar
@@ -317,19 +320,22 @@ export default function Dashboard() {
               </h3>
               <div className="grid grid-cols-3 gap-3">
                 <button
-                  className="py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:shadow-md text-sm"
+                  onClick={() => onNavigate && onNavigate('checklist')}
+                  className="py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:shadow-md text-sm cursor-pointer"
                   style={{ backgroundColor: 'var(--accent-pink)' }}
                 >
                   Checklist Inicio
                 </button>
                 <button
-                  className="py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:shadow-md text-sm"
+                  onClick={() => onNavigate && onNavigate('leadscorer')}
+                  className="py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:shadow-md text-sm cursor-pointer"
                   style={{ backgroundColor: 'var(--accent-gold)', color: 'var(--primary-dark)' }}
                 >
                   Lead Scorer
                 </button>
                 <button
-                  className="py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:shadow-md text-sm"
+                  onClick={() => onNavigate && onNavigate('checklist')}
+                  className="py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:shadow-md text-sm cursor-pointer"
                   style={{ backgroundColor: 'var(--success)' }}
                 >
                   Checklist Cierre
