@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Trash2, Calendar, X } from 'lucide-react';
 import taskService from '../services/taskService';
 
@@ -19,14 +19,7 @@ export default function TaskManager({ user }) {
     { id: 'low_priority', label: 'No Urgentes', color: 'var(--text-light)', bg: 'rgba(107, 114, 128, 0.05)' }
   ];
 
-  // Cargar tareas
-  useEffect(() => {
-    if (user) {
-      loadTasks();
-    }
-  }, [user, loadTasks]);
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     setLoading(true);
     try {
       const userTasks = await taskService.getUserTasks(user.uid);
@@ -36,7 +29,14 @@ export default function TaskManager({ user }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  // Cargar tareas
+  useEffect(() => {
+    if (user) {
+      loadTasks();
+    }
+  }, [user, loadTasks]);
 
   const handleCreateTask = async (e) => {
     e.preventDefault();
