@@ -2,8 +2,8 @@
 // Google Sheets Integration Service
 // ========================================
 
-const SHEET_ID = '1oXf-RKETOsMJgchOeMnmigvZHvd-E1zNWnv336cCcps';
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/d/YOUR_SCRIPT_ID/usercontent';
+const SHEET_ID = '1By_fq_LDr0wn7hTjPChn-oeBSz3em31_P-Yl4uY5TDo';
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3u44zjq-OuO_WYWji0wnUIC1d6W1pvMvpXitiKUhkMtfURO7Xpdz8OxYh9zyAPWw/exec';
 
 /**
  * Guardar KPIs del día en Google Sheets
