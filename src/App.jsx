@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Menu, X, Home, CheckSquare, Calendar, Target, BookMarked, Package, Bell } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Home, CheckSquare, Calendar, Target, BookMarked, Package, LogOut, Loader } from 'lucide-react';
+import authService from './services/authService';
+import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import DailyChecklist from './components/DailyChecklist';
 import Cronograma from './components/Cronograma';
@@ -11,6 +13,8 @@ import './App.css';
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
@@ -21,10 +25,29 @@ function App() {
     { id: 'productos', label: 'Productos', icon: Package }
   ];
 
+  // Detectar usuario al cargar
+  useEffect(() => {
+    const unsubscribe = authService.onAuthStateChanged((authUser) => {
+      setUser(authUser);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      setUser(null);
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard user={user} />;
       case 'checklist':
         return <DailyChecklist />;
       case 'cronograma':
@@ -36,12 +59,33 @@ function App() {
       case 'productos':
         return <Productos />;
       default:
-        return <Dashboard />;
+        return <Dashboard user={user} />;
     }
   };
 
+  // LOADING
+  if (loading) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--bg-light)' }}
+      >
+        <Loader size={40} style={{ color: 'var(--accent-pink)', animation: 'spin 1s linear infinite' }} />
+      </div>
+    );
+  }
+
+  // NO AUTENTICADO - MOSTRAR LOGIN
+  if (!user) {
+    return <Login onLoginSuccess={() => {}} />;
+  }
+
+  // AUTENTICADO - MOSTRAR APP
   return (
-    <div style={{ backgroundColor: 'var(--bg-light)' }} className="min-h-screen flex flex-col md:flex-row">
+    <div
+      style={{ backgroundColor: 'var(--bg-light)' }}
+      className="min-h-screen flex flex-col md:flex-row"
+    >
       {/* SIDEBAR */}
       <aside
         style={{ backgroundColor: 'var(--primary-dark)' }}
@@ -91,7 +135,7 @@ function App() {
 
         {/* USER SECTION */}
         <div
-          className="absolute bottom-0 left-0 right-0 p-6 border-t"
+          className="absolute bottom-0 left-0 right-0 p-6 border-t space-y-4"
           style={{ borderColor: 'rgba(236, 72, 153, 0.1)', backgroundColor: 'var(--primary-darker)' }}
         >
           <div className="flex items-center gap-3">
@@ -99,35 +143,57 @@ function App() {
               className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
               style={{ backgroundColor: 'var(--accent-pink)' }}
             >
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>ST</span>
+              <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>
+                {user?.displayName?.charAt(0).toUpperCase() || 'U'}
+              </span>
             </div>
             <div className="min-w-0">
               <p className="text-sm font-medium truncate" style={{ color: 'white' }}>
-                Stefany
+                {user?.displayName || 'Usuario'}
               </p>
               <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>
                 Setter
               </p>
             </div>
           </div>
+
+          <button
+            onClick={handleLogout}
+            className="w-full py-2 px-4 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+            style={{
+              backgroundColor: 'rgba(236, 72, 153, 0.2)',
+              color: 'var(--accent-pink)'
+            }}
+          >
+            <LogOut size={16} />
+            Salir
+          </button>
         </div>
       </aside>
 
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col md:ml-0">
         {/* TOPBAR */}
-        <header style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border-light)' }}>
+        <header
+          style={{
+            backgroundColor: 'white',
+            borderBottom: '1px solid var(--border-light)'
+          }}
+        >
           <div className="px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden"
+                className="md:hidden transition-colors"
                 style={{ color: 'var(--text-dark)' }}
               >
                 {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
               <div className="hidden md:block">
-                <p style={{ color: 'var(--text-dark)', fontSize: '14px' }}>
+                <p
+                  style={{ color: 'var(--text-dark)', fontSize: '14px' }}
+                  className="font-medium"
+                >
                   {new Date().toLocaleDateString('es-ES', {
                     weekday: 'long',
                     day: 'numeric',
@@ -138,15 +204,9 @@ function App() {
               </div>
             </div>
 
-            <button
-              className="p-2 rounded-lg transition-colors"
-              style={{
-                backgroundColor: 'var(--bg-light)',
-                color: 'var(--text-light)'
-              }}
-            >
-              <Bell size={20} />
-            </button>
+            <div className="text-sm" style={{ color: 'var(--text-light)' }}>
+              {user?.email}
+            </div>
           </div>
         </header>
 
