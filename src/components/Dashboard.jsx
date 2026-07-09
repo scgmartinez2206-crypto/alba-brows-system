@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, MessageCircle, CheckCircle2, DollarSign, ChevronRight, Clock } from 'lucide-react';
+import { TrendingUp, MessageCircle, CheckCircle2, DollarSign, ChevronRight } from 'lucide-react';
 import { CRONOGRAMA, KPIS_META } from '../data/alba-constants';
 
 export default function Dashboard() {
