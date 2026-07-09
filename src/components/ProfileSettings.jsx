@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, X, Save, Loader } from 'lucide-react';
-import { auth } from '../firebase';
 
 export default function ProfileSettings({ user, onClose }) {
   const [loading, setLoading] = useState(false);

@@ -24,7 +24,7 @@ export default function TaskManager({ user }) {
     if (user) {
       loadTasks();
     }
-  }, [user]);
+  }, [user, loadTasks]);
 
   const loadTasks = async () => {
     setLoading(true);

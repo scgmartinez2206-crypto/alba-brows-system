@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Lock, Bell, Sun, X, Loader } from 'lucide-react';
-import { auth } from '../firebase';
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 
 export default function AccountSettings({ user, onClose }) {
