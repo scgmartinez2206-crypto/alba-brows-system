@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, MessageCircle, CheckCircle2, DollarSign, ChevronRight } from 'lucide-react';
+import { TrendingUp, MessageCircle, CheckCircle2, DollarSign, ChevronRight, Clock } from 'lucide-react';
 import { CRONOGRAMA, KPIS_META } from '../data/alba-constants';
 
 export default function Dashboard() {
@@ -33,66 +33,114 @@ export default function Dashboard() {
   };
 
   const metrics = [
-    { label: 'Conversaciones', value: kpis.conversaciones, meta: KPIS_META.conversaciones, icon: MessageCircle, color: 'rgb(236, 72, 153)' },
-    { label: 'Seguimientos', value: kpis.contactados, meta: KPIS_META.contactados, icon: TrendingUp, color: 'rgb(251, 191, 36)' },
-    { label: 'Valoraciones', value: kpis.cualificados, meta: KPIS_META.cualificados, icon: CheckCircle2, color: 'rgb(139, 92, 246)' },
-    { label: 'Comisión', value: `$${(kpis.agendados * 180).toLocaleString()}`, meta: 0, icon: DollarSign, color: 'rgb(34, 197, 94)' }
+    {
+      label: 'Conversaciones',
+      value: kpis.conversaciones,
+      meta: KPIS_META.conversaciones,
+      icon: MessageCircle,
+      color: 'var(--accent-pink)'
+    },
+    {
+      label: 'Contactados',
+      value: kpis.contactados,
+      meta: KPIS_META.contactados,
+      icon: TrendingUp,
+      color: 'var(--accent-gold)'
+    },
+    {
+      label: 'Cualificados',
+      value: kpis.cualificados,
+      meta: KPIS_META.cualificados,
+      icon: CheckCircle2,
+      color: 'var(--success)'
+    },
+    {
+      label: 'Comisión',
+      value: `$${(kpis.agendados * 180).toLocaleString()}`,
+      meta: 0,
+      icon: DollarSign,
+      color: 'var(--accent-gold)'
+    }
   ];
 
   return (
-    <div style={{ backgroundColor: 'var(--bg-light)', minHeight: '100vh' }} className="p-4 md:p-8">
+    <div style={{ backgroundColor: 'var(--bg-light)' }} className="min-h-screen p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
 
-        {/* GREETING */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-dark)' }}>
-            Hoy es un gran día para transformar vidas 🎀
-          </h2>
-          <p style={{ color: 'var(--text-light)' }}>Continúa con tu plan y alcanza tus metas</p>
+        {/* HEADER */}
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-dark)' }}>
+            Dashboard Operativo
+          </h1>
+          <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>
+            Control de actividades y metas diarias
+          </p>
         </div>
 
         {/* METRICS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           {metrics.map((metric, idx) => {
             const Icon = metric.icon;
+            const progress = calcProgress(
+              typeof metric.value === 'string' ? 0 : metric.value,
+              metric.meta
+            );
             return (
               <div
                 key={idx}
-                className="rounded-lg p-6 border transition-all hover:shadow-lg cursor-pointer"
+                className="rounded-lg p-6 transition-all duration-200 hover:shadow-lg"
                 style={{
                   backgroundColor: 'white',
-                  borderColor: 'var(--border-light)',
-                  borderLeft: `4px solid ${metric.color}`
+                  border: '1px solid var(--border-light)'
                 }}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div
                     className="p-3 rounded-lg"
                     style={{
-                      backgroundColor: `${metric.color}20`
+                      backgroundColor: `${metric.color}15`
                     }}
                   >
-                    <Icon size={24} style={{ color: metric.color }} />
+                    <Icon size={22} style={{ color: metric.color }} />
                   </div>
-                  <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-light)', color: 'var(--text-light)' }}>
+                  <span
+                    className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                    style={{
+                      backgroundColor: 'var(--bg-light)',
+                      color: 'var(--text-light)'
+                    }}
+                  >
                     {metric.label}
                   </span>
                 </div>
-                <p className="text-3xl font-bold mb-2" style={{ color: metric.color }}>
-                  {metric.value}
-                </p>
+
+                <div className="mb-3">
+                  <p
+                    className="text-3xl font-bold"
+                    style={{ color: metric.color }}
+                  >
+                    {metric.value}
+                  </p>
+                </div>
+
                 {metric.meta > 0 && (
                   <div>
-                    <div className="h-1 rounded-full mb-2" style={{ backgroundColor: 'var(--border-light)' }}>
+                    <div
+                      className="h-1.5 rounded-full overflow-hidden"
+                      style={{ backgroundColor: 'var(--border-light)' }}
+                    >
                       <div
-                        className="h-1 rounded-full transition-all"
+                        className="h-full rounded-full transition-all duration-300"
                         style={{
-                          width: `${calcProgress(metric.value, metric.meta)}%`,
+                          width: `${progress}%`,
                           backgroundColor: metric.color
                         }}
                       />
                     </div>
-                    <p className="text-xs" style={{ color: 'var(--text-light)' }}>
+                    <p
+                      className="text-xs mt-2"
+                      style={{ color: 'var(--text-light)' }}
+                    >
                       Meta: {metric.meta}
                     </p>
                   </div>
@@ -105,83 +153,186 @@ export default function Dashboard() {
         {/* MAIN GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* TU PRIORIDAD HOY */}
-          <div className="lg:col-span-1 rounded-lg p-6 bg-white border" style={{ borderColor: 'var(--border-light)' }}>
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--text-dark)' }}>
-              <span>👋</span> Tu prioridad hoy
+          {/* PRIORITY TASKS */}
+          <div
+            className="rounded-lg p-6"
+            style={{ backgroundColor: 'white', border: '1px solid var(--border-light)' }}
+          >
+            <h3 className="font-semibold mb-5" style={{ color: 'var(--text-dark)' }}>
+              Tareas Prioritarias
             </h3>
 
             <div className="space-y-3">
-              <div className="p-3 rounded-lg bg-red-50 border-l-4 border-red-500">
-                <p className="text-sm font-bold text-red-600">Responder a María López</p>
-                <p className="text-xs text-red-500">Hace 5h que espera respuesta</p>
-                <button className="text-xs font-bold mt-2 px-3 py-1 rounded" style={{ backgroundColor: 'var(--accent-pink)', color: 'white' }}>
-                  Responder
+              <div
+                className="p-4 rounded-lg border-l-4"
+                style={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                  borderColor: '#ef4444'
+                }}
+              >
+                <p className="text-sm font-semibold mb-1" style={{ color: '#b91c1c' }}>
+                  Seguimiento - María López
+                </p>
+                <p className="text-xs" style={{ color: '#7f1d1d' }}>
+                  Pendiente desde hace 5 horas
+                </p>
+                <button
+                  className="mt-3 text-xs font-semibold px-3 py-1.5 rounded transition-colors"
+                  style={{
+                    backgroundColor: 'var(--accent-pink)',
+                    color: 'white'
+                  }}
+                >
+                  Actuar Ahora
                 </button>
               </div>
 
-              <div className="p-3 rounded-lg bg-amber-50 border-l-4 border-amber-500">
-                <p className="text-sm font-bold text-amber-600">Enviar información Master Lips</p>
-                <p className="text-xs text-amber-500">Andrea Ruiz - Interesada en curso</p>
-                <button className="text-xs font-bold mt-2 px-3 py-1 rounded" style={{ backgroundColor: 'var(--accent-gold)', color: 'var(--primary-dark)' }}>
+              <div
+                className="p-4 rounded-lg border-l-4"
+                style={{
+                  backgroundColor: 'rgba(251, 191, 36, 0.05)',
+                  borderColor: 'var(--accent-gold)'
+                }}
+              >
+                <p className="text-sm font-semibold mb-1" style={{ color: '#92400e' }}>
+                  Enviar información - Andrea Ruiz
+                </p>
+                <p className="text-xs" style={{ color: '#78350f' }}>
+                  Interesada en programa
+                </p>
+                <button
+                  className="mt-3 text-xs font-semibold px-3 py-1.5 rounded transition-colors"
+                  style={{
+                    backgroundColor: 'var(--accent-gold)',
+                    color: 'var(--primary-dark)'
+                  }}
+                >
                   Enviar
                 </button>
               </div>
             </div>
 
-            <button className="w-full mt-4 text-center text-sm font-bold py-2 rounded-lg transition" style={{ color: 'var(--accent-pink)' }}>
-              Ver todas mis tareas <ChevronRight size={16} className="inline ml-1" />
+            <button
+              className="w-full mt-5 text-sm font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors"
+              style={{
+                color: 'var(--accent-pink)',
+                backgroundColor: 'transparent',
+                border: '1px solid var(--border-light)'
+              }}
+            >
+              Ver Todas
+              <ChevronRight size={16} />
             </button>
           </div>
 
-          {/* ESTADO Y CRONOGRAMA */}
+          {/* STATE & SCHEDULE */}
           <div className="lg:col-span-2 space-y-6">
 
-            {/* ESTADO ACTUAL */}
+            {/* STATUS CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="rounded-lg p-6 bg-white border text-center" style={{ borderColor: 'var(--border-light)' }}>
-                <p style={{ color: 'var(--text-light)' }} className="text-sm mb-2">Estado Actual</p>
-                <h4 className="text-2xl font-bold mb-2" style={{ color: estaEnProspectacion ? 'var(--accent-pink)' : 'var(--text-dark)' }}>
-                  {estaEnProspectacion ? '🔥 Prospectación' : '📚 Capacitación'}
-                </h4>
-                <div className="text-xs p-2 rounded-lg" style={{ backgroundColor: 'var(--bg-light)' }}>
-                  <p style={{ color: 'var(--text-light)' }}>Comienza 15 de julio</p>
-                </div>
+              <div
+                className="rounded-lg p-6"
+                style={{ backgroundColor: 'white', border: '1px solid var(--border-light)' }}
+              >
+                <p
+                  className="text-xs font-semibold mb-3 uppercase tracking-wide"
+                  style={{ color: 'var(--text-light)' }}
+                >
+                  Estado Actual
+                </p>
+                <p
+                  className="text-lg font-bold"
+                  style={{
+                    color: estaEnProspectacion
+                      ? 'var(--accent-pink)'
+                      : 'var(--text-dark)'
+                  }}
+                >
+                  {estaEnProspectacion ? 'Prospectación' : 'Capacitación'}
+                </p>
+                <p
+                  className="text-xs mt-2"
+                  style={{ color: 'var(--text-light)' }}
+                >
+                  Inicia 15 julio
+                </p>
               </div>
 
-              <div className="rounded-lg p-6 bg-white border text-center" style={{ borderColor: 'var(--border-light)' }}>
-                <p style={{ color: 'var(--text-light)' }} className="text-sm mb-2">Días Faltantes</p>
-                <h4 className="text-4xl font-bold" style={{ color: 'var(--accent-gold)' }}>
+              <div
+                className="rounded-lg p-6"
+                style={{ backgroundColor: 'white', border: '1px solid var(--border-light)' }}
+              >
+                <p
+                  className="text-xs font-semibold mb-3 uppercase tracking-wide"
+                  style={{ color: 'var(--text-light)' }}
+                >
+                  Días Restantes
+                </p>
+                <p
+                  className="text-lg font-bold"
+                  style={{ color: 'var(--accent-gold)' }}
+                >
                   {diasFaltantes}
-                </h4>
-                <p className="text-xs mt-2" style={{ color: 'var(--text-light)' }}>Vamos por más 💪</p>
+                </p>
+                <p
+                  className="text-xs mt-2"
+                  style={{ color: 'var(--text-light)' }}
+                >
+                  Hasta prospectación
+                </p>
               </div>
 
-              <div className="rounded-lg p-6 bg-white border" style={{ borderColor: 'var(--border-light)' }}>
-                <p style={{ color: 'var(--text-light)' }} className="text-sm mb-2">Tarea Hoy</p>
-                <h4 className="font-bold mb-2" style={{ color: 'var(--text-dark)' }}>
+              <div
+                className="rounded-lg p-6"
+                style={{ backgroundColor: 'white', border: '1px solid var(--border-light)' }}
+              >
+                <p
+                  className="text-xs font-semibold mb-3 uppercase tracking-wide"
+                  style={{ color: 'var(--text-light)' }}
+                >
+                  Hoy
+                </p>
+                <p
+                  className="text-sm font-bold line-clamp-2"
+                  style={{ color: 'var(--text-dark)' }}
+                >
                   {cronoHoy?.titulo || 'Sin cronograma'}
-                </h4>
-                <div className="text-xs space-y-1">
-                  {cronoHoy?.tareas?.slice(0, 2).map((t, i) => (
-                    <p key={i} style={{ color: 'var(--text-light)' }}>• {t}</p>
-                  ))}
-                </div>
+                </p>
+                <p
+                  className="text-xs mt-2"
+                  style={{ color: 'var(--text-light)' }}
+                >
+                  Tareas del día
+                </p>
               </div>
             </div>
 
             {/* QUICK ACTIONS */}
-            <div className="rounded-lg p-6 bg-white border" style={{ borderColor: 'var(--border-light)' }}>
-              <h3 className="text-lg font-bold mb-4" style={{ color: 'var(--text-dark)' }}>Acciones Rápidas</h3>
-              <div className="grid grid-cols-3 gap-4">
-                <button className="p-4 rounded-lg font-bold transition hover:shadow-lg text-white" style={{ backgroundColor: 'var(--accent-pink)' }}>
-                  ✓ Checklist Inicio
+            <div
+              className="rounded-lg p-6"
+              style={{ backgroundColor: 'white', border: '1px solid var(--border-light)' }}
+            >
+              <h3 className="font-semibold mb-4" style={{ color: 'var(--text-dark)' }}>
+                Acciones Rápidas
+              </h3>
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  className="py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:shadow-md text-sm"
+                  style={{ backgroundColor: 'var(--accent-pink)' }}
+                >
+                  Checklist Inicio
                 </button>
-                <button className="p-4 rounded-lg font-bold transition hover:shadow-lg text-white" style={{ backgroundColor: 'var(--accent-gold)', color: 'var(--primary-dark)' }}>
-                  🎯 Lead Scorer
+                <button
+                  className="py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:shadow-md text-sm"
+                  style={{ backgroundColor: 'var(--accent-gold)', color: 'var(--primary-dark)' }}
+                >
+                  Lead Scorer
                 </button>
-                <button className="p-4 rounded-lg font-bold transition hover:shadow-lg text-white" style={{ backgroundColor: 'var(--success)' }}>
-                  ✓ Checklist Cierre
+                <button
+                  className="py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 hover:shadow-md text-sm"
+                  style={{ backgroundColor: 'var(--success)' }}
+                >
+                  Checklist Cierre
                 </button>
               </div>
             </div>

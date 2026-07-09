@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Home, CheckCircle, Calendar, Zap, BookOpen, ShoppingBag, Bell, LogOut } from 'lucide-react';
+import { Menu, X, Home, CheckSquare, Calendar, Target, BookMarked, Package, Bell } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import DailyChecklist from './components/DailyChecklist';
 import Cronograma from './components/Cronograma';
@@ -13,12 +13,12 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Inicio', icon: Home },
-    { id: 'checklist', label: 'Checklist', icon: CheckCircle },
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
+    { id: 'checklist', label: 'Checklist', icon: CheckSquare },
     { id: 'cronograma', label: 'Cronograma', icon: Calendar },
-    { id: 'leadscorer', label: 'Lead Scorer', icon: Zap },
-    { id: 'guiones', label: 'Guiones & Scripts', icon: BookOpen },
-    { id: 'productos', label: 'Productos', icon: ShoppingBag }
+    { id: 'leadscorer', label: 'Lead Scorer', icon: Target },
+    { id: 'guiones', label: 'Guiones', icon: BookMarked },
+    { id: 'productos', label: 'Productos', icon: Package }
   ];
 
   const renderPage = () => {
@@ -41,17 +41,24 @@ function App() {
   };
 
   return (
-    <div style={{ backgroundColor: 'var(--bg-light)', minHeight: '100vh' }} className="flex">
+    <div style={{ backgroundColor: 'var(--bg-light)' }} className="min-h-screen flex flex-col md:flex-row">
       {/* SIDEBAR */}
-      <aside style={{ backgroundColor: 'var(--primary-dark)' }} className={`${mobileMenuOpen ? 'block' : 'hidden'} md:block w-full md:w-64 md:min-h-screen fixed md:sticky md:top-0 z-40 md:z-auto`}>
-        {/* LOGO */}
-        <div className="p-6 border-b" style={{ borderColor: 'var(--border-light)', backgroundColor: 'var(--primary-darker)' }}>
-          <h2 className="text-2xl font-bold" style={{ color: 'var(--accent-gold)' }}>Alba</h2>
-          <p className="text-xs" style={{ color: 'var(--accent-pink)' }}>Beauty & Academy</p>
+      <aside
+        style={{ backgroundColor: 'var(--primary-dark)' }}
+        className={`${mobileMenuOpen ? 'block' : 'hidden'} md:block w-full md:w-56 md:min-h-screen fixed md:sticky md:top-0 z-40 md:z-auto overflow-y-auto`}
+      >
+        {/* LOGO SECTION */}
+        <div className="p-8 border-b" style={{ borderColor: 'rgba(236, 72, 153, 0.1)' }}>
+          <h2 className="text-xl font-bold tracking-tight" style={{ color: 'white' }}>
+            ALBA
+          </h2>
+          <p className="text-xs mt-1" style={{ color: 'var(--accent-gold)' }}>
+            Setter System
+          </p>
         </div>
 
         {/* NAVIGATION */}
-        <nav className="p-4 space-y-2">
+        <nav className="p-6 space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
@@ -62,46 +69,55 @@ function App() {
                   setCurrentPage(item.id);
                   setMobileMenuOpen(false);
                 }}
-                className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all ${
-                  isActive
-                    ? 'text-white font-bold'
-                    : 'text-gray-300 hover:text-white'
-                }`}
+                className="w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all duration-200"
                 style={{
                   backgroundColor: isActive ? 'var(--accent-pink)' : 'transparent',
-                  color: isActive ? 'white' : 'currentColor'
+                  color: isActive ? 'white' : 'rgba(255,255,255,0.6)',
+                  fontWeight: isActive ? '600' : '400'
                 }}
               >
-                <Icon size={20} />
-                <span>{item.label}</span>
+                <Icon size={18} />
+                <span className="text-sm">{item.label}</span>
+                {isActive && (
+                  <div
+                    className="ml-auto w-2 h-2 rounded-full"
+                    style={{ backgroundColor: 'white' }}
+                  />
+                )}
               </button>
             );
           })}
         </nav>
 
-        {/* USER PROFILE */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t" style={{ borderColor: 'var(--border-light)', backgroundColor: 'var(--primary-darker)' }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-pink)' }}>
-              <span style={{ color: 'white' }} className="font-bold">S</span>
+        {/* USER SECTION */}
+        <div
+          className="absolute bottom-0 left-0 right-0 p-6 border-t"
+          style={{ borderColor: 'rgba(236, 72, 153, 0.1)', backgroundColor: 'var(--primary-darker)' }}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: 'var(--accent-pink)' }}
+            >
+              <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>ST</span>
             </div>
-            <div>
-              <p className="text-sm font-bold" style={{ color: 'white' }}>Stefany</p>
-              <p className="text-xs" style={{ color: 'var(--text-light)' }}>Setter Senior</p>
+            <div className="min-w-0">
+              <p className="text-sm font-medium truncate" style={{ color: 'white' }}>
+                Stefany
+              </p>
+              <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                Setter
+              </p>
             </div>
           </div>
-          <button className="w-full py-2 px-3 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition" style={{ backgroundColor: 'var(--accent-gold)', color: 'var(--primary-dark)' }}>
-            <LogOut size={16} />
-            Salir
-          </button>
         </div>
       </aside>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col md:ml-0">
         {/* TOPBAR */}
-        <header className="border-b" style={{ borderColor: 'var(--border-light)', backgroundColor: 'white' }}>
-          <div className="px-4 md:px-8 py-4 flex items-center justify-between">
+        <header style={{ backgroundColor: 'white', borderBottom: '1px solid var(--border-light)' }}>
+          <div className="px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -110,21 +126,27 @@ function App() {
               >
                 {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
-              <h1 className="text-2xl font-bold hidden md:block" style={{ color: 'var(--text-dark)' }}>
-                ¡Buenos días, Stefany! ✨
-              </h1>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <button className="p-2 rounded-lg hover:opacity-70 transition" style={{ backgroundColor: 'var(--bg-light)', color: 'var(--text-dark)' }}>
-                <Bell size={20} />
-              </button>
-              <div className="text-sm text-right hidden md:block">
-                <p style={{ color: 'var(--text-dark)' }} className="font-medium">
-                  {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+              <div className="hidden md:block">
+                <p style={{ color: 'var(--text-dark)', fontSize: '14px' }}>
+                  {new Date().toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
                 </p>
               </div>
             </div>
+
+            <button
+              className="p-2 rounded-lg transition-colors"
+              style={{
+                backgroundColor: 'var(--bg-light)',
+                color: 'var(--text-light)'
+              }}
+            >
+              <Bell size={20} />
+            </button>
           </div>
         </header>
 
