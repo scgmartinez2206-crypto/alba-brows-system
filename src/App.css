@@ -1,4 +1,20 @@
-/* Alba Brows System - Global Styles */
+/* Alba Brows System - Professional Design */
+
+:root {
+  --primary-dark: #1a1a2e;
+  --primary-darker: #0f0f23;
+  --accent-pink: #ec4899;
+  --accent-pink-light: #f472b6;
+  --accent-gold: #fbbf24;
+  --accent-gold-dark: #d4af37;
+  --bg-light: #f5f0e8;
+  --bg-white: #faf9f7;
+  --text-dark: #1a1a2e;
+  --text-light: #6b7280;
+  --border-light: #e5e7eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
 
 * {
   margin: 0;
@@ -12,8 +28,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: #f1f5f9;
+  background: var(--bg-light);
+  color: var(--text-dark);
 }
 
 code {
@@ -23,31 +39,35 @@ code {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 5px;
+  background: var(--accent-gold);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: var(--accent-gold-dark);
 }
 
 /* Inputs */
 input, textarea, select {
   font-family: inherit;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
 }
 
 input:focus, textarea:focus, select:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--accent-pink);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
 }
 
 /* Animations */
@@ -62,6 +82,15 @@ input:focus, textarea:focus, select:focus {
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -73,4 +102,8 @@ input:focus, textarea:focus, select:focus {
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in;
 }

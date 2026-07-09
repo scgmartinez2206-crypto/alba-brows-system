@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Home, CheckCircle, Calendar, Zap, BookOpen, ShoppingBag } from 'lucide-react';
+import { Menu, X, Home, CheckCircle, Calendar, Zap, BookOpen, ShoppingBag, Bell, LogOut } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import DailyChecklist from './components/DailyChecklist';
 import Cronograma from './components/Cronograma';
@@ -13,12 +13,12 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home, color: 'from-blue-600 to-blue-700' },
-    { id: 'checklist', label: 'Checklist', icon: CheckCircle, color: 'from-green-600 to-green-700' },
-    { id: 'cronograma', label: 'Cronograma', icon: Calendar, color: 'from-purple-600 to-purple-700' },
-    { id: 'leadscorer', label: 'Lead Scorer', icon: Zap, color: 'from-yellow-600 to-yellow-700' },
-    { id: 'guiones', label: 'Guiones', icon: BookOpen, color: 'from-red-600 to-red-700' },
-    { id: 'productos', label: 'Productos', icon: ShoppingBag, color: 'from-pink-600 to-pink-700' }
+    { id: 'dashboard', label: 'Inicio', icon: Home },
+    { id: 'checklist', label: 'Checklist', icon: CheckCircle },
+    { id: 'cronograma', label: 'Cronograma', icon: Calendar },
+    { id: 'leadscorer', label: 'Lead Scorer', icon: Zap },
+    { id: 'guiones', label: 'Guiones & Scripts', icon: BookOpen },
+    { id: 'productos', label: 'Productos', icon: ShoppingBag }
   ];
 
   const renderPage = () => {
@@ -41,80 +41,95 @@ function App() {
   };
 
   return (
-    <div className="bg-slate-900 min-h-screen">
-      {/* HEADER */}
-      <header className="bg-gradient-to-r from-slate-900 to-slate-800 border-b-2 border-slate-700 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white">🎀 Alba Brows System</h1>
-
-          {/* HAMBURGER MENU */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-white"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+    <div style={{ backgroundColor: 'var(--bg-light)', minHeight: '100vh' }} className="flex">
+      {/* SIDEBAR */}
+      <aside style={{ backgroundColor: 'var(--primary-dark)' }} className={`${mobileMenuOpen ? 'block' : 'hidden'} md:block w-full md:w-64 md:min-h-screen fixed md:sticky md:top-0 z-40 md:z-auto`}>
+        {/* LOGO */}
+        <div className="p-6 border-b" style={{ borderColor: 'var(--border-light)', backgroundColor: 'var(--primary-darker)' }}>
+          <h2 className="text-2xl font-bold" style={{ color: 'var(--accent-gold)' }}>Alba</h2>
+          <p className="text-xs" style={{ color: 'var(--accent-pink)' }}>Beauty & Academy</p>
         </div>
 
-        {/* MOBILE MENU */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-slate-800 border-t border-slate-700">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setCurrentPage(item.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-3 flex items-center gap-3 transition ${
-                    currentPage === item.id
-                      ? 'bg-slate-700 border-l-4 border-l-blue-500'
-                      : 'hover:bg-slate-700'
-                  } text-slate-200`}
-                >
-                  <Icon size={20} />
-                  {item.label}
-                </button>
-              );
-            })}
+        {/* NAVIGATION */}
+        <nav className="p-4 space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentPage === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setCurrentPage(item.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all ${
+                  isActive
+                    ? 'text-white font-bold'
+                    : 'text-gray-300 hover:text-white'
+                }`}
+                style={{
+                  backgroundColor: isActive ? 'var(--accent-pink)' : 'transparent',
+                  color: isActive ? 'white' : 'currentColor'
+                }}
+              >
+                <Icon size={20} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* USER PROFILE */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t" style={{ borderColor: 'var(--border-light)', backgroundColor: 'var(--primary-darker)' }}>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-pink)' }}>
+              <span style={{ color: 'white' }} className="font-bold">S</span>
+            </div>
+            <div>
+              <p className="text-sm font-bold" style={{ color: 'white' }}>Stefany</p>
+              <p className="text-xs" style={{ color: 'var(--text-light)' }}>Setter Senior</p>
+            </div>
           </div>
-        )}
-      </header>
+          <button className="w-full py-2 px-3 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition" style={{ backgroundColor: 'var(--accent-gold)', color: 'var(--primary-dark)' }}>
+            <LogOut size={16} />
+            Salir
+          </button>
+        </div>
+      </aside>
 
-      <div className="flex">
-        {/* SIDEBAR */}
-        <aside className="hidden md:block w-64 bg-slate-800 border-r border-slate-700 min-h-screen sticky top-16">
-          <nav className="p-4 space-y-2">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setCurrentPage(item.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition ${
-                    currentPage === item.id
-                      ? `bg-gradient-to-r ${item.color} text-white font-bold`
-                      : 'text-slate-300 hover:bg-slate-700'
-                  }`}
-                >
-                  <Icon size={20} />
-                  {item.label}
-                </button>
-              );
-            })}
-          </nav>
+      {/* MAIN CONTENT */}
+      <div className="flex-1 flex flex-col">
+        {/* TOPBAR */}
+        <header className="border-b" style={{ borderColor: 'var(--border-light)', backgroundColor: 'white' }}>
+          <div className="px-4 md:px-8 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden"
+                style={{ color: 'var(--text-dark)' }}
+              >
+                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+              <h1 className="text-2xl font-bold hidden md:block" style={{ color: 'var(--text-dark)' }}>
+                ¡Buenos días, Stefany! ✨
+              </h1>
+            </div>
 
-          {/* FOOTER */}
-          <div className="absolute bottom-4 left-4 right-4 bg-slate-700 p-3 rounded text-xs text-slate-300">
-            <p>💪 Stefany - Setter Alba Brows</p>
-            <p className="mt-1">Conectado a Firebase ✅</p>
+            <div className="flex items-center gap-4">
+              <button className="p-2 rounded-lg hover:opacity-70 transition" style={{ backgroundColor: 'var(--bg-light)', color: 'var(--text-dark)' }}>
+                <Bell size={20} />
+              </button>
+              <div className="text-sm text-right hidden md:block">
+                <p style={{ color: 'var(--text-dark)' }} className="font-medium">
+                  {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                </p>
+              </div>
+            </div>
           </div>
-        </aside>
+        </header>
 
-        {/* CONTENT */}
-        <main className="flex-1 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900">
+        {/* PAGE CONTENT */}
+        <main className="flex-1 overflow-auto">
           {renderPage()}
         </main>
       </div>
