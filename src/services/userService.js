@@ -1,25 +1,19 @@
-import { db } from '../firebase';
-import {
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  serverTimestamp,
-  collection,
-  query,
-  where,
-  getDocs
-} from 'firebase/firestore';
-
-const USERS_COLLECTION = 'user_profiles';
+import { supabase } from '../supabase';
 
 /**
- * USER SERVICE
- * Maneja todo lo relacionado con perfiles de usuario
+ * USER SERVICE - SUPABASE EDITION
+ *
+ * Maneja todo lo relacionado con perfiles de usuario usando Supabase PostgreSQL
  * - Crear perfil
  * - Actualizar datos
  * - Obtener datos
  * - Sincronizar con Firebase Auth
+ *
+ * VENTAJAS:
+ * ✅ PostgreSQL (queries más poderosas)
+ * ✅ Interfaz SQL amigable (Supabase Studio)
+ * ✅ Row-level security integrada
+ * ✅ Relaciones entre tablas
  */
 
 export const userService = {
@@ -31,31 +25,51 @@ export const userService = {
     if (!authUser?.uid) throw new Error('No auth user provided');
 
     try {
-      const userRef = doc(db, USERS_COLLECTION, authUser.uid);
-      const userSnap = await getDoc(userRef);
+      // Primero: intentar obtener el perfil
+      const { data: existingProfile, error: selectError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('uid', authUser.uid)
+        .single();
 
       const profileData = {
-        displayName: authUser.displayName || '',
+        uid: authUser.uid,
+        display_name: authUser.displayName || '',
         email: authUser.email || '',
-        photoURL: authUser.photoURL || null,
+        photo_url: authUser.photoURL || null,
         rol: 'setter',
-        isActive: true,
-        updatedAt: serverTimestamp()
+        is_active: true
       };
 
-      if (!userSnap.exists()) {
+      if (selectError || !existingProfile) {
         // Crear nuevo perfil
-        profileData.createdAt = serverTimestamp();
-        profileData.phoneNumber = ''; // Vacío al inicio
-        await setDoc(userRef, profileData);
-        console.log('✅ User profile created:', authUser.uid);
+        const { data, error } = await supabase
+          .from('user_profiles')
+          .insert([profileData])
+          .select()
+          .single();
+
+        if (error) throw error;
+        console.log('✅ User profile created in Supabase:', authUser.uid);
+        return data;
       } else {
         // Actualizar perfil existente
-        await updateDoc(userRef, profileData);
-        console.log('✅ User profile updated:', authUser.uid);
-      }
+        const { data, error } = await supabase
+          .from('user_profiles')
+          .update({
+            display_name: profileData.display_name,
+            email: profileData.email,
+            photo_url: profileData.photo_url,
+            updated_at: new Date().toISOString()
+          })
+          .eq('uid', authUser.uid)
+          .select()
+          .single();
 
-      return profileData;
+        if (error) throw error;
+        console.log('✅ User profile updated in Supabase:', authUser.uid);
+        return data;
+      }
     } catch (error) {
       console.error('❌ Error creating/updating user profile:', error);
       throw error;
@@ -69,17 +83,31 @@ export const userService = {
     if (!uid) throw new Error('No uid provided');
 
     try {
-      const userRef = doc(db, USERS_COLLECTION, uid);
-      const userSnap = await getDoc(userRef);
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('uid', uid)
+        .single();
 
-      if (!userSnap.exists()) {
-        console.warn('⚠️ User profile not found:', uid);
-        return null;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No row found
+          console.warn('⚠️ User profile not found:', uid);
+          return null;
+        }
+        throw error;
       }
 
       return {
-        uid: userSnap.id,
-        ...userSnap.data()
+        uid: data.uid,
+        displayName: data.display_name,
+        email: data.email,
+        phoneNumber: data.phone_number,
+        photoURL: data.photo_url,
+        rol: data.rol,
+        isActive: data.is_active,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
       };
     } catch (error) {
       console.error('❌ Error getting user profile:', error);
@@ -89,8 +117,6 @@ export const userService = {
 
   /**
    * Actualizar datos del perfil (phone, foto URL, etc.)
-   * IMPORTANTE: displayName se guarda en Firebase Auth
-   * Phone se guarda AQUÍ en Firestore
    */
   updateUserProfile: async (uid, updates) => {
     if (!uid) throw new Error('No uid provided');
@@ -100,18 +126,36 @@ export const userService = {
     }
 
     try {
-      const userRef = doc(db, USERS_COLLECTION, uid);
-
-      const updateData = {
-        ...updates,
-        updatedAt: serverTimestamp()
+      // Convertir nombres de camelCase a snake_case
+      const snakeCaseUpdates = {
+        updated_at: new Date().toISOString()
       };
 
-      await updateDoc(userRef, updateData);
-      console.log('✅ User profile updated:', uid, updates);
+      if (updates.phoneNumber) snakeCaseUpdates.phone_number = updates.phoneNumber;
+      if (updates.photoURL) snakeCaseUpdates.photo_url = updates.photoURL;
+      if (updates.displayName) snakeCaseUpdates.display_name = updates.displayName;
 
-      // Retornar datos actualizados
-      return await userService.getUserProfile(uid);
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .update(snakeCaseUpdates)
+        .eq('uid', uid)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      console.log('✅ User profile updated in Supabase:', uid, updates);
+
+      // Retornar datos en formato camelCase
+      return {
+        uid: data.uid,
+        displayName: data.display_name,
+        email: data.email,
+        phoneNumber: data.phone_number,
+        photoURL: data.photo_url,
+        rol: data.rol,
+        isActive: data.is_active
+      };
     } catch (error) {
       console.error('❌ Error updating user profile:', error);
       throw error;
@@ -120,7 +164,6 @@ export const userService = {
 
   /**
    * Actualizar teléfono
-   * Guardado en Firestore (NO en Firebase Auth)
    */
   updatePhoneNumber: async (uid, phoneNumber) => {
     return userService.updateUserProfile(uid, { phoneNumber });
@@ -128,7 +171,6 @@ export const userService = {
 
   /**
    * Actualizar URL de foto
-   * Guardado en Firestore
    */
   updatePhotoURL: async (uid, photoURL) => {
     return userService.updateUserProfile(uid, { photoURL });
@@ -136,13 +178,13 @@ export const userService = {
 
   /**
    * Obtener perfil completo del usuario actual
-   * (Combina Firebase Auth + Firestore)
+   * (Combina Firebase Auth + Supabase)
    */
   getCompleteUserProfile: async (authUser) => {
     if (!authUser?.uid) return null;
 
     try {
-      const firestoreProfile = await userService.getUserProfile(authUser.uid);
+      const supabaseProfile = await userService.getUserProfile(authUser.uid);
 
       return {
         // De Firebase Auth
@@ -151,13 +193,13 @@ export const userService = {
         displayName: authUser.displayName,
         firebasePhotoURL: authUser.photoURL,
 
-        // De Firestore
-        phoneNumber: firestoreProfile?.phoneNumber || '',
-        photoURL: firestoreProfile?.photoURL || authUser.photoURL, // Prioriza Firestore
-        rol: firestoreProfile?.rol || 'setter',
-        isActive: firestoreProfile?.isActive || true,
-        createdAt: firestoreProfile?.createdAt,
-        updatedAt: firestoreProfile?.updatedAt
+        // De Supabase
+        phoneNumber: supabaseProfile?.phoneNumber || '',
+        photoURL: supabaseProfile?.photoURL || authUser.photoURL,
+        rol: supabaseProfile?.rol || 'setter',
+        isActive: supabaseProfile?.isActive || true,
+        createdAt: supabaseProfile?.createdAt,
+        updatedAt: supabaseProfile?.updatedAt
       };
     } catch (error) {
       console.error('❌ Error getting complete user profile:', error);
