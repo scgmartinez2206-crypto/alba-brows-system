@@ -11,6 +11,7 @@ import Productos from './components/Productos';
 import TaskManager from './components/TaskManager';
 import ProfileSettings from './components/ProfileSettings';
 import AccountSettings from './components/AccountSettings';
+import AIChat from './components/AIChat';
 import './App.css';
 
 function App() {
@@ -21,6 +22,14 @@ function App() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showAvatarDropdown, setShowAvatarDropdown] = useState(false);
+  const [kpis, setKpis] = useState({});
+  const [tasks, setTasks] = useState([]);
+
+  // Cargar KPIs desde localStorage
+  useEffect(() => {
+    const kpisLocal = JSON.parse(localStorage.getItem('kpis') || '{}');
+    setKpis(kpisLocal);
+  }, []);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
@@ -288,6 +297,9 @@ function App() {
           onClose={() => setShowSettingsModal(false)}
         />
       )}
+
+      {/* AI CHAT */}
+      {user && <AIChat user={user} kpis={kpis} tasks={tasks} />}
     </div>
   );
 }
