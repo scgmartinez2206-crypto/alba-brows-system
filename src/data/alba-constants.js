@@ -316,11 +316,45 @@ export const CHECKLIST_CIERRE = [
 ];
 
 export const METODOS_PAGO = [
-  "Transferencia bancaria",
-  "Efectivo",
-  "Western Union",
-  "Caribe Express",
-  "Remitly"
+  {
+    nombre: "Popular",
+    titular: "Alba Gutiérrez",
+    detalles: [
+      "Ahorro en pesos RD: No. 807 532 395",
+      "Ahorro en dólares USD: No. 818 159 816"
+    ]
+  },
+  {
+    nombre: "BanReservas",
+    titular: "Alba Gutiérrez",
+    detalles: [
+      "Ahorro en pesos RD: No. 960 287 96 62"
+    ]
+  },
+  {
+    nombre: "SCOTIABANK",
+    titular: "Alba Gutiérrez",
+    detalles: [
+      "Ahorro en pesos RD: 63200021933",
+      "Ahorro en dólares USD: 63200020938"
+    ]
+  },
+  {
+    nombre: "BHD León",
+    titular: "Alba Gutiérrez",
+    detalles: [
+      "Ahorro en pesos RD: No. 143 802 800 14"
+    ]
+  },
+  {
+    nombre: "Western Union / Caribe Express",
+    titular: "Luz María del alba polanco Ramires",
+    detalles: [
+      "Cédula: 001-0778659-2",
+      "Teléfono: 1-829-977-5918",
+      "Disponible en ambos servicios"
+    ]
+  }
 ];
 
 export const BONOS = [

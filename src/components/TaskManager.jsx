@@ -182,7 +182,7 @@ export default function TaskManager({ user }) {
                         )}
 
                         {/* STATUS BUTTONS */}
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
                           {status.id !== 'completed' && (
                             <button
                               onClick={() => handleStatusChange(task.id, 'completed')}
@@ -196,6 +196,19 @@ export default function TaskManager({ user }) {
                               Completar
                             </button>
                           )}
+                          {status.id !== 'in_progress' && status.id !== 'completed' && (
+                            <button
+                              onClick={() => handleStatusChange(task.id, 'in_progress')}
+                              className="text-xs px-2 py-1 rounded transition-all"
+                              style={{
+                                backgroundColor: 'var(--accent-gold)',
+                                color: 'var(--primary-dark)',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              En Proceso
+                            </button>
+                          )}
                           {status.id !== 'urgent' && status.id !== 'completed' && (
                             <button
                               onClick={() => handleStatusChange(task.id, 'urgent')}
@@ -207,6 +220,19 @@ export default function TaskManager({ user }) {
                               }}
                             >
                               Urgente
+                            </button>
+                          )}
+                          {status.id !== 'low_priority' && status.id !== 'completed' && (
+                            <button
+                              onClick={() => handleStatusChange(task.id, 'low_priority')}
+                              className="text-xs px-2 py-1 rounded transition-all"
+                              style={{
+                                backgroundColor: 'var(--text-light)',
+                                color: 'white',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              No Urgente
                             </button>
                           )}
                         </div>

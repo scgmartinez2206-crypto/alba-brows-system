@@ -7,89 +7,156 @@ export default function Cronograma() {
   const hoyNorm = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8">
-      <h1 className="text-3xl font-bold text-white mb-2">📅 Cronograma Oficial (6-15 Julio)</h1>
-      <p className="text-slate-400 mb-8">Capacitación + Inicio Prospección</p>
+    <div style={{ backgroundColor: 'var(--bg-light)' }} className="min-h-screen p-6 md:p-8">
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-dark)' }}>
+            📅 Cronograma Oficial
+          </h1>
+          <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>
+            Capacitación (6-14 Julio) + Inicio Prospección (15 Julio)
+          </p>
+        </div>
 
-      <div className="space-y-4">
-        {CRONOGRAMA.map((dia, index) => {
-          const fechaDia = new Date(dia.fecha);
-          const esHoy = fechaDia.toDateString() === hoyNorm.toDateString();
-          const esPasado = fechaDia < hoyNorm;
-          const esProspectacion = dia.tipo === 'prospectacion';
+        <div className="space-y-4">
+          {CRONOGRAMA.map((dia, index) => {
+            const fechaDia = new Date(dia.fecha);
+            const esHoy = fechaDia.toDateString() === hoyNorm.toDateString();
+            const esPasado = fechaDia < hoyNorm;
+            const esProspectacion = dia.tipo === 'prospectacion';
 
-          return (
-            <div
-              key={index}
-              className={`border-l-4 p-6 rounded-lg transition ${
-                esProspectacion
-                  ? 'border-l-red-500 bg-red-900/30'
-                  : 'border-l-blue-500 bg-blue-900/30'
-              } ${esHoy ? 'ring-2 ring-yellow-500' : ''} ${
-                esPasado ? 'opacity-60' : ''
-              }`}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    {esHoy && <span className="inline-block w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></span>}
-                    <h2 className="text-2xl font-bold text-white">{dia.titulo}</h2>
+            const borderColor = esProspectacion ? 'var(--accent-pink)' : 'var(--accent-gold)';
+            const bgColor = esProspectacion
+              ? 'rgba(236, 72, 153, 0.08)'
+              : 'rgba(251, 191, 36, 0.08)';
+            const labelColor = esProspectacion ? 'var(--accent-pink)' : 'var(--accent-gold)';
+
+            return (
+              <div
+                key={index}
+                className="rounded-lg p-6 border transition-all hover:shadow-md"
+                style={{
+                  backgroundColor: 'white',
+                  borderLeft: `4px solid ${borderColor}`,
+                  borderColor: 'var(--border-light)',
+                  opacity: esPasado ? 0.7 : 1
+                }}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      {esHoy && (
+                        <span
+                          className="inline-block w-3 h-3 rounded-full animate-pulse"
+                          style={{ backgroundColor: 'var(--accent-pink)' }}
+                        ></span>
+                      )}
+                      <h2 className="text-2xl font-bold" style={{ color: 'var(--text-dark)' }}>
+                        {dia.titulo}
+                      </h2>
+                    </div>
+                    <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>
+                      {dia.dia} • {dia.fecha}
+                    </p>
                   </div>
-                  <p className="text-slate-400 mt-1">{dia.dia} - {dia.fecha}</p>
+                  <div>
+                    {esPasado ? (
+                      <CheckCircle style={{ color: 'var(--success)' }} size={32} />
+                    ) : esHoy ? (
+                      <AlertCircle style={{ color: 'var(--accent-pink)' }} size={32} className="animate-pulse" />
+                    ) : (
+                      <Calendar style={{ color: labelColor }} size={32} />
+                    )}
+                  </div>
                 </div>
-                {esPasado ? (
-                  <CheckCircle className="text-green-500" size={32} />
-                ) : esHoy ? (
-                  <AlertCircle className="text-yellow-500 animate-pulse" size={32} />
-                ) : (
-                  <Calendar className="text-blue-500" size={32} />
+
+                {dia.reunion && (
+                  <div className="mb-4 p-3 rounded-lg flex items-center gap-2" style={{ backgroundColor: bgColor }}>
+                    <Clock size={18} style={{ color: labelColor }} />
+                    <p className="font-semibold" style={{ color: 'var(--text-dark)' }}>
+                      {dia.reunion}
+                    </p>
+                  </div>
                 )}
-              </div>
 
-              {dia.reunion && (
-                <div className="bg-slate-900 p-3 rounded mb-4 flex items-center gap-2">
-                  <Clock size={18} className="text-amber-400" />
-                  <p className="text-amber-300 font-semibold">{dia.reunion}</p>
+                <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-light)' }}>
+                  <p className="font-semibold mb-3" style={{ color: 'var(--text-dark)' }}>
+                    📋 Tareas del día:
+                  </p>
+                  <ul className="space-y-2">
+                    {dia.tareas.map((tarea, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span style={{ color: labelColor, marginTop: '4px' }}>✓</span>
+                        <span style={{ color: 'var(--text-dark)', fontSize: '14px' }}>
+                          {tarea}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              )}
 
-              <div className="bg-slate-900/50 p-4 rounded">
-                <p className="text-slate-300 font-semibold mb-2">📋 Tareas del día:</p>
-                <ul className="space-y-2">
-                  {dia.tareas.map((tarea, i) => (
-                    <li key={i} className="flex items-center gap-2 text-slate-200">
-                      <span className="text-yellow-400">→</span> {tarea}
-                    </li>
-                  ))}
-                </ul>
+                <div className="p-3 rounded-lg border-l-4"
+                  style={{
+                    backgroundColor: 'white',
+                    borderColor: labelColor,
+                    borderTopColor: 'var(--border-light)',
+                    borderRightColor: 'var(--border-light)',
+                    borderBottomColor: 'var(--border-light)'
+                  }}>
+                  <p className="font-semibold" style={{ color: labelColor }}>
+                    🎯 KPI esperado:
+                  </p>
+                  <p className="mt-1" style={{ color: 'var(--text-dark)', fontSize: '14px' }}>
+                    {dia.kpi}
+                  </p>
+                </div>
               </div>
+            );
+          })}
+        </div>
 
-              <div className="mt-4 p-3 bg-purple-900/50 rounded">
-                <p className="text-purple-300 font-semibold">🎯 KPI esperado:</p>
-                <p className="text-purple-200 mt-1">{dia.kpi}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* LEYENDA */}
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-yellow-900/30 border-l-4 border-l-yellow-500 p-4 rounded">
-          <p className="text-yellow-300 font-bold">🟡 Hoy</p>
-          <p className="text-yellow-200 text-sm mt-1">Es hoy, enfócate en este día</p>
-        </div>
-        <div className="bg-green-900/30 border-l-4 border-l-green-500 p-4 rounded">
-          <p className="text-green-300 font-bold">✅ Completado</p>
-          <p className="text-green-200 text-sm mt-1">Ya pasó, buen trabajo</p>
-        </div>
-        <div className="bg-blue-900/30 border-l-4 border-l-blue-500 p-4 rounded">
-          <p className="text-blue-300 font-bold">📅 Capacitación</p>
-          <p className="text-blue-200 text-sm mt-1">Fase de aprendizaje</p>
-        </div>
-        <div className="bg-red-900/30 border-l-4 border-l-red-500 p-4 rounded">
-          <p className="text-red-300 font-bold">🔥 Prospectación</p>
-          <p className="text-red-200 text-sm mt-1">Fase de ventas en vivo</p>
+        {/* LEYENDA */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-lg p-4 border" style={{
+            backgroundColor: 'rgba(236, 72, 153, 0.1)',
+            borderColor: 'var(--accent-pink)',
+            borderLeft: '4px solid var(--accent-pink)'
+          }}>
+            <p className="font-bold" style={{ color: 'var(--accent-pink)' }}>🟡 Hoy</p>
+            <p style={{ color: 'var(--text-light)', fontSize: '13px', marginTop: '6px' }}>
+              Enfócate en este día
+            </p>
+          </div>
+          <div className="rounded-lg p-4 border" style={{
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderColor: 'var(--success)',
+            borderLeft: '4px solid var(--success)'
+          }}>
+            <p className="font-bold" style={{ color: 'var(--success)' }}>✅ Completado</p>
+            <p style={{ color: 'var(--text-light)', fontSize: '13px', marginTop: '6px' }}>
+              Ya pasó, buen trabajo
+            </p>
+          </div>
+          <div className="rounded-lg p-4 border" style={{
+            backgroundColor: 'rgba(251, 191, 36, 0.1)',
+            borderColor: 'var(--accent-gold)',
+            borderLeft: '4px solid var(--accent-gold)'
+          }}>
+            <p className="font-bold" style={{ color: 'var(--accent-gold)' }}>📅 Capacitación</p>
+            <p style={{ color: 'var(--text-light)', fontSize: '13px', marginTop: '6px' }}>
+              Fase de aprendizaje
+            </p>
+          </div>
+          <div className="rounded-lg p-4 border" style={{
+            backgroundColor: 'rgba(236, 72, 153, 0.1)',
+            borderColor: 'var(--accent-pink)',
+            borderLeft: '4px solid var(--accent-pink)'
+          }}>
+            <p className="font-bold" style={{ color: 'var(--accent-pink)' }}>🔥 Prospectación</p>
+            <p style={{ color: 'var(--text-light)', fontSize: '13px', marginTop: '6px' }}>
+              Fase de ventas en vivo
+            </p>
+          </div>
         </div>
       </div>
     </div>

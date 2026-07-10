@@ -175,33 +175,56 @@ export default function Productos() {
 
         {/* METODOS DE PAGO */}
         {activeTab === 'metodos' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {METODOS_PAGO.map((metodo, idx) => (
-              <div
-                key={idx}
-                className="rounded-lg p-6 border"
-                style={{
-                  backgroundColor: 'white',
-                  borderColor: 'var(--border-light)'
-                }}
-              >
-                <h3 className="font-bold mb-3" style={{ color: 'var(--text-dark)' }}>
-                  {metodo.nombre}
-                </h3>
-                <div className="space-y-2">
-                  {metodo.detalles?.map((detalle, i) => (
-                    <p
-                      key={i}
-                      style={{ color: 'var(--text-light)', fontSize: '14px' }}
-                      className="flex items-start gap-2"
-                    >
-                      <ChevronRight size={14} className="flex-shrink-0 mt-1" />
-                      {detalle}
-                    </p>
-                  ))}
+          <div>
+            <div className="mb-6 p-6 rounded-lg" style={{ backgroundColor: 'rgba(236, 72, 153, 0.05)', borderLeft: '4px solid var(--accent-pink)' }}>
+              <p style={{ color: 'var(--text-dark)', fontSize: '14px', marginBottom: '8px' }}>
+                <strong>📱 Contacto Directo:</strong>
+              </p>
+              <p style={{ color: 'var(--text-dark)', fontSize: '14px', marginBottom: '4px' }}>
+                Luz María del alba polanco Ramires | Teléfono: 1-829-977-5918
+              </p>
+              <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>
+                Disponible para consultas sobre métodos de pago y transferencias
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {METODOS_PAGO.map((metodo, idx) => (
+                <div
+                  key={idx}
+                  className="rounded-lg p-6 border transition-all hover:shadow-lg"
+                  style={{
+                    backgroundColor: 'white',
+                    borderColor: 'var(--border-light)',
+                    borderLeft: '4px solid var(--accent-gold)'
+                  }}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--accent-pink)' }}>
+                        {metodo.nombre}
+                      </h3>
+                      <p className="text-sm" style={{ color: 'var(--text-light)' }}>
+                        A nombre de: {metodo.titular}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-4 border-t" style={{ borderColor: 'var(--border-light)' }}>
+                    {metodo.detalles?.map((detalle, i) => (
+                      <p
+                        key={i}
+                        style={{ color: 'var(--text-dark)', fontSize: '14px' }}
+                        className="flex items-start gap-2 font-medium"
+                      >
+                        <span style={{ color: 'var(--accent-gold)', marginTop: '2px' }}>✓</span>
+                        {detalle}
+                      </p>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </div>
