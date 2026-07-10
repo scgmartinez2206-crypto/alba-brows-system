@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DollarSign, Clock, Gift, ChevronRight } from 'lucide-react';
+import { DollarSign, Clock, Gift } from 'lucide-react';
 import { PRODUCTOS, BONOS, METODOS_PAGO } from '../data/alba-constants';
 
 export default function Productos() {
