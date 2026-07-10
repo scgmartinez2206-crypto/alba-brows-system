@@ -39,17 +39,17 @@ export const taskService = {
     try {
       const q = query(
         collection(db, TASKS_COLLECTION),
-        where('userId', '==', userId),
-        orderBy('createdAt', 'desc')
+        where('userId', '==', userId)
       );
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
+      const tasks = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate(),
         dueDate: doc.data().dueDate?.toDate(),
         completedAt: doc.data().completedAt?.toDate()
       }));
+      return tasks.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     } catch (error) {
       console.error('Error fetching tasks:', error);
       return [];
