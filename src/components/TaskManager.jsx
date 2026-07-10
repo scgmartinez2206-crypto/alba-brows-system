@@ -6,6 +6,7 @@ export default function TaskManager({ user }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -43,6 +44,7 @@ export default function TaskManager({ user }) {
     if (!formData.title.trim()) return;
 
     try {
+      setError('');
       await taskService.createTask(user.uid, {
         ...formData,
         status: 'low_priority'
@@ -50,8 +52,9 @@ export default function TaskManager({ user }) {
       setFormData({ title: '', description: '', dueDate: '' });
       setShowModal(false);
       await loadTasks();
-    } catch (error) {
-      console.error('Error creating task:', error);
+    } catch (err) {
+      console.error('Error creating task:', err);
+      setError('Error al crear tarea: ' + (err?.message || 'Intenta de nuevo'));
     }
   };
 
@@ -253,6 +256,18 @@ export default function TaskManager({ user }) {
                 <X size={20} />
               </button>
             </div>
+
+            {error && (
+              <div
+                className="p-3 rounded-lg mb-4 text-sm"
+                style={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                  color: '#ef4444'
+                }}
+              >
+                {error}
+              </div>
+            )}
 
             <form onSubmit={handleCreateTask} className="space-y-4">
               <div>

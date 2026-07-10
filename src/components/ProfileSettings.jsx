@@ -14,16 +14,23 @@ export default function ProfileSettings({ user, onClose }) {
     setLoading(true);
 
     try {
-      if (formData.displayName !== user.displayName) {
-        await user.updateProfile({
-          displayName: formData.displayName
-        });
+      const updateData = {};
+      if (formData.displayName && formData.displayName !== user.displayName) {
+        updateData.displayName = formData.displayName;
       }
-      // Aquí podrías actualizar teléfono en Firestore si lo deseas
+      if (formData.phone !== user.phoneNumber) {
+        updateData.phoneNumber = formData.phone;
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        await user.updateProfile(updateData);
+        await user.reload();
+      }
       setLoading(false);
       onClose();
     } catch (error) {
       console.error('Error updating profile:', error);
+      alert('Error al guardar perfil: ' + error.message);
       setLoading(false);
     }
   };

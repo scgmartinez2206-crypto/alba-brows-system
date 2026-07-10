@@ -23,7 +23,7 @@ export const taskService = {
         title: taskData.title,
         description: taskData.description || '',
         status: taskData.status || 'low_priority',
-        dueDate: taskData.dueDate ? new Date(taskData.dueDate) : null,
+        dueDate: taskData.dueDate ? Timestamp.fromDate(new Date(taskData.dueDate)) : null,
         createdAt: Timestamp.now(),
         completedAt: null
       });
@@ -78,7 +78,7 @@ export const taskService = {
         title: taskData.title,
         description: taskData.description,
         status: taskData.status,
-        dueDate: taskData.dueDate ? new Date(taskData.dueDate) : null
+        dueDate: taskData.dueDate ? Timestamp.fromDate(new Date(taskData.dueDate)) : null
       });
     } catch (error) {
       console.error('Error updating task:', error);
