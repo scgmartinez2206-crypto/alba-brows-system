@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Home, CheckSquare, Calendar, Target, BookMarked, Package, LogOut, Loader, ListTodo, User, Settings } from 'lucide-react';
 import authService from './services/authService';
+import userService from './services/userService';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import DailyChecklist from './components/DailyChecklist';
@@ -41,9 +42,19 @@ function App() {
     { id: 'productos', label: 'Productos', icon: Package }
   ];
 
-  // Detectar usuario al cargar
+  // Detectar usuario al cargar y crear/actualizar perfil en Firestore
   useEffect(() => {
-    const unsubscribe = authService.onAuthStateChanged((authUser) => {
+    const unsubscribe = authService.onAuthStateChanged(async (authUser) => {
+      if (authUser) {
+        try {
+          // Crear o actualizar perfil en Firestore
+          await userService.createOrUpdateUserProfile(authUser);
+          console.log('✅ User profile synced to Firestore');
+        } catch (error) {
+          console.error('⚠️ Error syncing user profile:', error);
+          // No bloqueamos el login si Firestore falla
+        }
+      }
       setUser(authUser);
       setLoading(false);
     });
